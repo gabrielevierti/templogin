@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS organizations (id TEXT PRIMARY KEY, name TEXT NOT NULL, created_at BIGINT NOT NULL);
+CREATE TABLE IF NOT EXISTS organization_members (organization_id TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, role TEXT NOT NULL CHECK(role IN ('owner','member')), PRIMARY KEY(organization_id,user_id));
+CREATE TABLE IF NOT EXISTS properties (id TEXT PRIMARY KEY, organization_id TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, name TEXT NOT NULL, UNIQUE(id,organization_id));
+CREATE TABLE IF NOT EXISTS devices (id TEXT PRIMARY KEY, organization_id TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, property_id TEXT NOT NULL, name TEXT NOT NULL, client_id TEXT NOT NULL CHECK(client_id IN ('demo-tv','demo-car')), secret_hash TEXT NOT NULL, created_at BIGINT NOT NULL, FOREIGN KEY(property_id,organization_id) REFERENCES properties(id,organization_id) ON DELETE CASCADE);
+CREATE TABLE IF NOT EXISTS stays (id TEXT PRIMARY KEY, organization_id TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE, property_id TEXT NOT NULL, guest_label TEXT NOT NULL, starts_at BIGINT NOT NULL, ends_at BIGINT NOT NULL, checked_out_at BIGINT, CHECK(ends_at > starts_at), FOREIGN KEY(property_id,organization_id) REFERENCES properties(id,organization_id) ON DELETE CASCADE);
+CREATE INDEX IF NOT EXISTS stays_property ON stays(property_id,starts_at,ends_at);
+CREATE TABLE IF NOT EXISTS pairings (id TEXT PRIMARY KEY, device_code_hash TEXT NOT NULL UNIQUE, user_code TEXT NOT NULL UNIQUE, client_id TEXT NOT NULL, device_name TEXT NOT NULL, device_id TEXT REFERENCES devices(id) ON DELETE CASCADE, stay_id TEXT REFERENCES stays(id) ON DELETE CASCADE, scopes JSONB NOT NULL, status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','denied','consumed','expired')), created_at BIGINT NOT NULL, expires_at BIGINT NOT NULL, last_poll_at BIGINT NOT NULL DEFAULT 0, poll_interval INTEGER NOT NULL DEFAULT 3000, grant_id TEXT);
+CREATE INDEX IF NOT EXISTS pairings_expiry ON pairings(expires_at);
+CREATE TABLE IF NOT EXISTS grants (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, device_id TEXT REFERENCES devices(id) ON DELETE CASCADE, stay_id TEXT REFERENCES stays(id) ON DELETE CASCADE, client_id TEXT NOT NULL, device_name TEXT NOT NULL, scopes JSONB NOT NULL, created_at BIGINT NOT NULL, expires_at BIGINT NOT NULL, revoked_at BIGINT, revoke_reason TEXT, CHECK(expires_at > created_at));
+CREATE INDEX IF NOT EXISTS grants_user ON grants(user_id,created_at);
+CREATE INDEX IF NOT EXISTS grants_stay ON grants(stay_id);
+CREATE TABLE IF NOT EXISTS access_tokens (token_hash TEXT PRIMARY KEY, grant_id TEXT NOT NULL REFERENCES grants(id) ON DELETE CASCADE, expires_at BIGINT NOT NULL);
+CREATE INDEX IF NOT EXISTS access_grant ON access_tokens(grant_id);
+CREATE TABLE IF NOT EXISTS refresh_tokens (token_hash TEXT PRIMARY KEY, grant_id TEXT NOT NULL REFERENCES grants(id) ON DELETE CASCADE, expires_at BIGINT NOT NULL, used_at BIGINT, created_at BIGINT NOT NULL);
+CREATE INDEX IF NOT EXISTS refresh_grant ON refresh_tokens(grant_id);
+CREATE TABLE IF NOT EXISTS audit_events (id TEXT PRIMARY KEY, user_id TEXT REFERENCES users(id) ON DELETE CASCADE, organization_id TEXT REFERENCES organizations(id) ON DELETE CASCADE, action TEXT NOT NULL, target_id TEXT, created_at BIGINT NOT NULL);
+CREATE INDEX IF NOT EXISTS audit_user ON audit_events(user_id,created_at);
+CREATE TABLE IF NOT EXISTS rate_limits (key TEXT PRIMARY KEY, window_start BIGINT NOT NULL, hits INTEGER NOT NULL);

@@ -1,0 +1,27 @@
+{
+  "name": "@templogin/provider-sdk",
+  "version": "1.0.0-rc.3",
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Provider-owned temporary TV sessions without tempLogin accounts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "zod": "^4.1.12"
+  },
+  "peerDependencies": {
+    "fastify": "^5.6.2"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "templogin",
+  "version": "1.0.0-rc.3",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "npm run build && node --env-file-if-exists=.env --import tsx services/api/main.ts",
+    "start": "node dist/server.js",
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build",
+    "setup": "node scripts/setup.mjs",
+    "maintenance": "node --env-file-if-exists=.env --import tsx scripts/maintenance.ts",
+    "rotate-provider-keys": "node --env-file-if-exists=.env --import tsx scripts/rotate-provider-keys.ts",
+    "licenses": "node scripts/licenses.mjs",
+    "benchmark": "node --import tsx scripts/benchmark.ts",
+    "dev:phone": "npm run build && node --import tsx scripts/phone.ts"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.3.14",
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/helmet": "^13.0.2",
+    "@fastify/static": "^10.1.7",
+    "@simplewebauthn/browser": "^13.2.2",
+    "@simplewebauthn/server": "^13.2.2",
+    "fastify": "^5.6.2",
+    "oauth4webapi": "^3.8.8",
+    "pg": "^8.16.3",
+    "qrcode": "^1.5.4",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.10.0",
+    "@types/pg": "^8.15.6",
+    "@types/qrcode": "^1.5.5",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.13.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2",
+    "vitest": "^5.0.5"
+  },
+  "license": "Apache-2.0",
+  "description": "Temporary, revocable device authorization through passkeys and QR handoff.",
+  "workspaces": [
+    "packages/sdk-js",
+    "packages/connector-sdk",
+    "packages/provider-sdk"
+  ]
+}

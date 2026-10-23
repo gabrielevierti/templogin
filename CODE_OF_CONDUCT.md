@@ -1,0 +1,2 @@
+# Code of conduct
+Participants must treat each other respectfully, welcome constructive technical criticism, and avoid harassment, discrimination, threats, doxxing, or sharing others' private information. Maintainers may remove harmful content and restrict participation proportionately. Report concerns privately to the repository owner through a verified contact once the repository is published. Decisions should be explained to affected parties while protecting the reporter's privacy. This policy applies in project discussions, issues, pull requests, and project events.

@@ -1,0 +1,19 @@
+{
+  "name": "@templogin/sdk-js",
+  "version": "1.0.0-rc.1",
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  }
+}

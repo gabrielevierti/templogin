@@ -1,0 +1,2 @@
+# Contributing
+Use Node 24 and npm ci. Run npm run check and npm run test:e2e before proposing changes. See README and docs for the protocol and local setup. Keep API compatibility or document breaking changes. Add adversarial tests for authorization changes, including races and cross-user access. Never add a production authentication bypass. Submit small, reviewable pull requests with the exact commands run and known limitations. Contributions are licensed Apache-2.0. Do not submit secrets or third-party assets without a compatible license.
